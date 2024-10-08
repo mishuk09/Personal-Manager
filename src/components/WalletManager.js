@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 
 const WalletManager = () => {
   const [wallet, setWallet] = useState({
@@ -15,8 +14,9 @@ const WalletManager = () => {
   useEffect(() => {
     const fetchWalletData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/costs');
-        setWallet(response.data);
+        const response = await fetch('http://localhost:5000/api/costs');
+        const data = await response.json();
+        setWallet(data);
       } catch (error) {
         console.error('Error fetching wallet data', error);
       }
@@ -34,14 +34,21 @@ const WalletManager = () => {
     }
 
     try {
-      await axios.post('http://localhost:5000/api/add-cost', {
-        costName,
-        costAmount: parseFloat(costAmount), // Convert to a number
+      await fetch('http://localhost:5000/api/add-cost', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          costName,
+          costAmount: parseFloat(costAmount), // Convert to a number
+        }),
       });
 
       // Fetch updated wallet data
-      const response = await axios.get('http://localhost:5000/api/costs');
-      setWallet(response.data);
+      const response = await fetch('http://localhost:5000/api/costs');
+      const data = await response.json();
+      setWallet(data);
 
       // Clear input fields after submission
       setCostName('');
@@ -61,13 +68,20 @@ const WalletManager = () => {
     }
 
     try {
-      await axios.post('http://localhost:5000/api/update-total', {
-        newAmount: parseFloat(newTotalAmount), // Convert to a number
+      await fetch('http://localhost:5000/api/update-total', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          newAmount: parseFloat(newTotalAmount), // Convert to a number
+        }),
       });
 
       // Fetch updated wallet data
-      const response = await axios.get('http://localhost:5000/api/costs');
-      setWallet(response.data);
+      const response = await fetch('http://localhost:5000/api/costs');
+      const data = await response.json();
+      setWallet(data);
 
       // Clear the input field
       setNewTotalAmount('');
